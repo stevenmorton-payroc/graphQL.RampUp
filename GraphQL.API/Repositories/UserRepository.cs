@@ -5,16 +5,16 @@ namespace GraphQL.API.Repositories;
 
 public class UserRepository
 {
-    public ConcurrentDictionary<Guid, User> UserStore { get; } = [];
+    private readonly ConcurrentDictionary<Guid, User> _userStore = [];
 
     public IEnumerable<User> GetAllUsers()
     {
-        return UserStore.Values;
+        return _userStore.Values;
     }
 
     public User? GetUserById(Guid id)
     {
-        UserStore.TryGetValue(id, out var user);
+        _userStore.TryGetValue(id, out var user);
         return user;
     }
 
@@ -23,7 +23,7 @@ public class UserRepository
         user.Id = Guid.NewGuid();
         user.Created = DateTime.UtcNow;
 
-        if (UserStore.TryAdd(user.Id, user))
+        if (_userStore.TryAdd(user.Id, user))
         {
             return user;
         }
@@ -33,6 +33,6 @@ public class UserRepository
 
     public bool DeleteUser(Guid id)
     {
-        return UserStore.TryRemove(id, out _);
+        return _userStore.TryRemove(id, out _);
     }
 }
